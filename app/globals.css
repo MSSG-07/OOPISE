@@ -1,26 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  --color-primary-forest: #2D6A4F;
+  --color-sage: #52B788;
+  --color-mint: #B7E4C7;
+  --color-warm-beige: #F5EFD6;
+  --color-sand: #E8D8B0;
+  --color-rose: #C0587A;
+  --color-amber: #D97706;
+  --color-deep-forest: #1A2E1F;
+  --color-dark-tan: #3D3526;
+  --color-warm-gray: #4A4435;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    height: 100%;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-warm-beige text-deep-forest font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
