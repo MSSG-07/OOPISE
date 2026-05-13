@@ -1,65 +1,126 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen bg-[#f7f7f6] text-[#22232a]">
+      {/* HERO SECTION */}
+      <section className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-12 px-6 py-16 lg:grid-cols-2">
+        
+        {/* LEFT CONTENT */}
+        <div>
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-[#6b665f]">
+            Smart Period Pain Triage
           </p>
+
+          <h1 className="max-w-2xl text-5xl font-bold leading-tight md:text-6xl">
+            Understand your body with intelligent menstrual health tracking.
+          </h1>
+
+          <p className="mt-6 max-w-xl text-lg leading-8 text-[#5a544d]">
+            Track symptoms, visualize pain patterns, receive wellness guidance,
+            and access personalized diet and exercise recommendations based on
+            your cycle.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <button className="rounded-full bg-[#020104] px-7 py-4 text-white transition hover:opacity-90">
+              Start Tracking
+            </button>
+
+            <button className="rounded-full border border-[#22232a] px-7 py-4 transition hover:bg-[#ebe9e6]">
+              Explore Features
+            </button>
+          </div>
+
+          {/* QUICK STATS */}
+          <div className="mt-12 flex flex-wrap gap-4">
+            <div className="rounded-2xl bg-white p-5 shadow-sm">
+              <p className="text-2xl font-bold">AI</p>
+              <p className="text-sm text-[#5a544d]">
+                Personalized wellness insights
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white p-5 shadow-sm">
+              <p className="text-2xl font-bold">Offline</p>
+              <p className="text-sm text-[#5a544d]">
+                Works in low-connectivity areas
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white p-5 shadow-sm">
+              <p className="text-2xl font-bold">Body Map</p>
+              <p className="text-sm text-[#5a544d]">
+                Visual pain localization
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* RIGHT DASHBOARD MOCKUP */}
+        <div className="relative">
+          <div className="rounded-[32px] bg-white p-6 shadow-2xl">
+            
+            {/* TOP */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-[#6b665f]">Current Cycle</p>
+                <h2 className="text-3xl font-bold">Day 14</h2>
+              </div>
+
+              <div className="rounded-full bg-[#f3f2ef] px-4 py-2 text-sm font-medium">
+                Medium Risk
+              </div>
+            </div>
+
+            {/* GRAPH PLACEHOLDER */}
+            <div className="mt-8 h-40 rounded-3xl bg-gradient-to-r from-[#d9d4cf] to-[#f1efec]" />
+
+            {/* SYMPTOMS */}
+            <div className="mt-8">
+              <p className="text-lg font-semibold">Recent Symptoms</p>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <span className="rounded-full bg-[#f3f2ef] px-4 py-2 text-sm">
+                  Fatigue
+                </span>
+
+                <span className="rounded-full bg-[#f3f2ef] px-4 py-2 text-sm">
+                  Cramps
+                </span>
+
+                <span className="rounded-full bg-[#f3f2ef] px-4 py-2 text-sm">
+                  Back Pain
+                </span>
+
+                <span className="rounded-full bg-[#f3f2ef] px-4 py-2 text-sm">
+                  Bloating
+                </span>
+              </div>
+            </div>
+
+            {/* WELLNESS CARD */}
+            <div className="mt-8 rounded-3xl bg-[#020104] p-6 text-white">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#d6d2cc]">
+                Wellness Guidance
+              </p>
+
+              <h3 className="mt-3 text-2xl font-semibold">
+                Focus on hydration and light stretching today.
+              </h3>
+
+              <p className="mt-3 text-sm text-[#d6d2cc]">
+                Suggested: Iron-rich meals, yoga, warm fluids, and reduced
+                high-intensity activity.
+              </p>
+            </div>
+          </div>
+
+          {/* FLOATING CARD */}
+          <div className="absolute -bottom-6 -left-6 rounded-3xl bg-white p-5 shadow-xl">
+            <p className="text-sm text-[#6b665f]">Hydration Goal</p>
+            <h3 className="text-2xl font-bold">80%</h3>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
