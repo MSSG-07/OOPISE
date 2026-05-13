@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Calendar, User } from "lucide-react";
 import PhoneFrame from "@/components/PhoneFrame";
 import { Button, Card } from "@/components/ui";
+import { saveUserProfile } from "@/utils/indexeddb";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -20,6 +21,24 @@ export default function SetupPage() {
 
   const canContinue =
     name.trim().length > 0 && lastPeriod.trim().length > 0;
+
+  async function handleContinue() {
+    if (!canContinue) return;
+
+    await saveUserProfile({
+      id: "current-user",
+      name: name.trim(),
+      age,
+      weight,
+      height,
+      lastPeriod,
+      cycleLength,
+      isRegular,
+      hasConcerns,
+    });
+
+    router.push("/dashboard");
+  }
 
   return (
     <PhoneFrame>
@@ -207,7 +226,7 @@ export default function SetupPage() {
         </div>
 
         <Button
-          onClick={() => router.push("/dashboard")}
+          onClick={handleContinue}
           disabled={!canContinue}
           className="w-full py-4"
         >
