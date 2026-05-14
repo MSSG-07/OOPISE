@@ -355,6 +355,7 @@ function LogScreen() {
 function BodyMapScreen() {
   const [selected, setSelected] = useState("Pelvic Area");
   const [markedAreas, setMarkedAreas] = useState<string[]>([]);
+  const [selectedPainTypes, setSelectedPainTypes] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
 
   const areas = {
@@ -591,21 +592,73 @@ function BodyMapScreen() {
         </div>
       </Card>
 
-      {markedAreas.length > 0 && (
+      <Card className="bg-white p-4">
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-warm-gray">
+          Search pain types (multiple choice)
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {quickTags.map((tag) => {
+            const active = selectedPainTypes.includes(tag);
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() =>
+                  setSelectedPainTypes((current) =>
+                    current.includes(tag)
+                      ? current.filter((item) => item !== tag)
+                      : [...current, tag]
+                  )
+                }
+                className={`rounded-full px-3 py-2 text-xs font-medium transition-all ${
+                  active ? "bg-primary-forest text-warm-beige" : "bg-sand text-deep-forest"
+                }`}
+              >
+                {tag}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-sm text-warm-gray">
+          Selected: {selectedPainTypes.length}
+        </p>
+      </Card>
+
+      {(markedAreas.length > 0 || selectedPainTypes.length > 0) && (
         <Card className="bg-white p-4">
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-warm-gray">
-            Marked areas ({markedAreas.length})
+            Selections
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {markedAreas.map((area) => (
-              <span
-                key={area}
-                className="rounded-full bg-rose/20 px-3 py-2 text-xs font-medium text-deep-forest"
-              >
-                {area}
-              </span>
-            ))}
-          </div>
+          {markedAreas.length > 0 ? (
+            <>
+              <p className="mt-2 text-xs font-medium text-warm-gray">Marked areas ({markedAreas.length})</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {markedAreas.map((area) => (
+                  <span
+                    key={area}
+                    className="rounded-full bg-rose/20 px-3 py-2 text-xs font-medium text-deep-forest"
+                  >
+                    {area}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : null}
+          {selectedPainTypes.length > 0 ? (
+            <>
+              <p className="mt-3 text-xs font-medium text-warm-gray">Pain types ({selectedPainTypes.length})</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedPainTypes.map((painType) => (
+                  <span
+                    key={painType}
+                    className="rounded-full bg-mint/40 px-3 py-2 text-xs font-medium text-deep-forest"
+                  >
+                    {painType}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : null}
           {status && <p className="mt-3 text-sm text-warm-gray">{status}</p>}
           <Button
             className="mt-4 w-full"
@@ -614,6 +667,7 @@ function BodyMapScreen() {
                 await saveBodyMapEntry({
                   createdAt: new Date().toISOString(),
                   markedAreas,
+                  painTypes: selectedPainTypes,
                 });
                 setStatus("Marked areas saved");
                 setTimeout(() => setStatus(null), 2000);

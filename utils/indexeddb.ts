@@ -95,6 +95,7 @@ export type BodyMapEntry = {
   id?: number;
   createdAt: string;
   markedAreas: string[];
+  painTypes: string[];
 };
 
 export async function saveBodyMapEntry(entry: BodyMapEntry) {
@@ -106,8 +107,8 @@ export async function saveBodyMapEntry(entry: BodyMapEntry) {
       createdAt: entry.createdAt,
       painLevel: -1,
       symptoms: 'body-map-entry',
-      notes: JSON.stringify(entry.markedAreas),
-      tags: [],
+      notes: JSON.stringify({ markedAreas: entry.markedAreas, painTypes: entry.painTypes }),
+      tags: entry.painTypes,
     };
     const req = store.add(record);
     req.onsuccess = () => resolve(req.result);
