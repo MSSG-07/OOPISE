@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "log": "Registro",
+    "map": "Mapa",
+    "sister": "Comunidad",
+    "trend": "Tendencia",
+    "profile": "Perfil"
+  },
+  "home": {
+    "title": "¡Bienvenida de nuevo, {{name}}!",
+    "phaseInfo": "Estás en la fase {{phase}}",
+    "flowLabel": "Flujo",
+    "moodLabel": "Estado de ánimo",
+    "noData": "Aún no hay datos"
+  },
+  "profile": {
+    "title": "Perfil",
+    "wellnessSetup": "Tu configuración de bienestar",
+    "editableProfile": "Perfil editable",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "name": "Nombre",
+    "age": "Edad",
+    "weight": "Peso",
+    "height": "Altura",
+    "lastPeriod": "Último período",
+    "cycleLength": "Duración del ciclo",
+    "regular": "Regular",
+    "irregular": "Irregular",
+    "noConcerns": "Sin preocupaciones",
+    "hasConcerns": "Con preocupaciones",
+    "saveSetup": "Guardar configuración",
+    "profileUpdated": "Perfil actualizado",
+    "reminders": "Recordatorios",
+    "darkMode": "Modo oscuro",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "exportData": "Exportar datos",
+    "loadExportData": "Cargar datos",
+    "downloadCsv": "CSV",
+    "viewActivity": "Ver mi actividad",
+    "logout": "Cerrar sesión",
+    "language": "Idioma",
+    "selectLanguage": "Selecciona idioma",
+    "unlockActivity": "Desbloquea tu actividad",
+    "enterPassword": "Ingresa tu contraseña para ver tu actividad",
+    "password": "Contraseña",
+    "cancel": "Cancelar",
+    "unlock": "Desbloquear",
+    "incorrectPassword": "Contraseña incorrecta"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "home": "होम",
+    "log": "लॉग",
+    "map": "मैप",
+    "sister": "सिस्टर",
+    "trend": "ट्रेंड",
+    "profile": "प्रोफाइल"
+  },
+  "home": {
+    "title": "वापस स्वागत है, {{name}}!",
+    "phaseInfo": "आप {{phase}} चरण में हैं",
+    "flowLabel": "फ्लो",
+    "moodLabel": "मूड",
+    "noData": "अभी कोई डेटा नहीं"
+  },
+  "profile": {
+    "title": "प्रोफाइल",
+    "wellnessSetup": "आपकी वेलनेस सेटअप",
+    "editableProfile": "संपादन योग्य प्रोफाइल",
+    "edit": "संपादित करें",
+    "close": "बंद करें",
+    "name": "नाम",
+    "age": "उम्र",
+    "weight": "वजन",
+    "height": "कद",
+    "lastPeriod": "अंतिम पीरियड",
+    "cycleLength": "सायकल लंबाई",
+    "regular": "नियमित",
+    "irregular": "अनियमित",
+    "noConcerns": "कोई चिंता नहीं",
+    "hasConcerns": "चिंता है",
+    "saveSetup": "वेलनेस सेटअप सेव करें",
+    "profileUpdated": "प्रोफाइल अपडेट हो गई",
+    "reminders": "रिमाइंडर",
+    "darkMode": "डार्क मोड",
+    "light": "लाइट",
+    "dark": "डार्क",
+    "exportData": "डेटा एक्सपोर्ट",
+    "loadExportData": "एक्सपोर्ट डेटा लोड करें",
+    "downloadCsv": "CSV",
+    "viewActivity": "मेरी गतिविधि देखें",
+    "logout": "लॉग आउट",
+    "language": "भाषा",
+    "selectLanguage": "भाषा चुनें",
+    "unlockActivity": "अपनी गतिविधि अनलॉक करें",
+    "enterPassword": "अपनी गतिविधि देखने के लिए पासवर्ड डालें",
+    "password": "पासवर्ड",
+    "cancel": "रद्द करें",
+    "unlock": "अनलॉक",
+    "incorrectPassword": "गलत पासवर्ड"
+  }
+}

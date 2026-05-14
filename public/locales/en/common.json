@@ -1,0 +1,109 @@
+{
+  "nav": {
+    "home": "Home",
+    "log": "Log",
+    "map": "Map",
+    "sister": "Sister",
+    "trend": "Trend",
+    "profile": "Profile"
+  },
+  "home": {
+    "title": "Welcome back, {{name}}!",
+    "phaseInfo": "You're in your {{phase}} phase",
+    "flowLabel": "Flow",
+    "moodLabel": "Mood",
+    "noData": "No data yet"
+  },
+  "log": {
+    "title": "Daily Log",
+    "painLevel": "Pain level",
+    "flow": "Flow",
+    "mood": "Mood",
+    "symptoms": "Symptoms",
+    "notes": "Notes",
+    "saveEntry": "Save entry",
+    "entryUpdated": "Entry updated",
+    "entrySaved": "Entry saved"
+  },
+  "bodymap": {
+    "title": "Body Map",
+    "selectPainAreas": "Select pain areas",
+    "painTypes": "Pain types",
+    "saveBodyMap": "Save body map",
+    "saved": "Body map saved"
+  },
+  "community": {
+    "title": "Community",
+    "shareYourStory": "Share your story",
+    "anonymous": "Anonymous",
+    "postStory": "Post story",
+    "myTalks": "My Talks",
+    "support": "Support",
+    "reply": "Reply",
+    "replies": "Replies"
+  },
+  "insights": {
+    "title": "Insights",
+    "averagePain": "Average pain",
+    "cycleInfo": "Your cycle",
+    "predictions": "Predictions",
+    "personalizedGuide": "Personalized Guide"
+  },
+  "profile": {
+    "title": "Profile",
+    "wellnessSetup": "Your wellness setup",
+    "editableProfile": "Editable profile",
+    "edit": "Edit",
+    "close": "Close",
+    "name": "Name",
+    "age": "Age",
+    "weight": "Weight",
+    "height": "Height",
+    "lastPeriod": "Last period",
+    "cycleLength": "Cycle length",
+    "regular": "Regular",
+    "irregular": "Irregular",
+    "noConcerns": "No concerns",
+    "hasConcerns": "Has concerns",
+    "saveSetup": "Save wellness setup",
+    "profileUpdated": "Profile updated",
+    "reminders": "Reminders",
+    "darkMode": "Dark mode",
+    "light": "Light",
+    "dark": "Dark",
+    "exportData": "Export data",
+    "loadExportData": "Load export data",
+    "downloadCsv": "CSV",
+    "viewActivity": "View my activity",
+    "logout": "Logout",
+    "language": "Language",
+    "selectLanguage": "Select language",
+    "unlockActivity": "Unlock your activity",
+    "enterPassword": "Enter your password to view your activity",
+    "password": "Password",
+    "cancel": "Cancel",
+    "unlock": "Unlock",
+    "incorrectPassword": "Incorrect password"
+  },
+  "phase": {
+    "menstrual": "Menstrual",
+    "follicular": "Follicular",
+    "ovulation": "Ovulation",
+    "luteal": "Luteal"
+  },
+  "flowOptions": {
+    "none": "None",
+    "light": "Light",
+    "medium": "Medium",
+    "heavy": "Heavy",
+    "spotting": "Spotting"
+  },
+  "moodOptions": {
+    "calm": "Calm",
+    "happy": "Happy",
+    "tired": "Tired",
+    "irritable": "Irritable",
+    "anxious": "Anxious",
+    "low": "Low"
+  }
+}

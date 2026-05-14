@@ -12,7 +12,6 @@ import {
   Calendar,
   Download,
   Coffee,
-  Eye,
   Droplets,
   Fingerprint,
   Heart,
@@ -23,6 +22,7 @@ import {
   MessageCircle,
   Search,
   Settings,
+  Globe,
   User,
   X,
 } from "lucide-react";
@@ -40,6 +40,7 @@ import {
   getAllCommunityPosts,
   getAllCommunityInteractions,
   saveCommunityInteraction,
+  predictPcosChance,
   type LogEntry,
   type BodyMapEntry,
   type CommunityPost,
@@ -1124,6 +1125,90 @@ function CommunityScreen() {
   );
 }
 
+function TrendLineChart({
+  title,
+  values,
+  color = "#2D6A4F",
+}: {
+  title: string;
+  values: Array<{ label: string; value: number }>;
+  color?: string;
+}) {
+  const width = 320;
+  const height = 140;
+  const padding = 16;
+  const max = Math.max(1, ...values.map((item) => item.value));
+  const min = Math.min(0, ...values.map((item) => item.value));
+  const range = Math.max(1, max - min);
+
+  const points = values.map((item, index) => {
+    const x = values.length > 1 ? padding + (index * (width - padding * 2)) / (values.length - 1) : width / 2;
+    const y = height - padding - ((item.value - min) / range) * (height - padding * 2);
+    return `${x},${y}`;
+  });
+
+  const path = points.length > 0 ? `M ${points.join(" L ")}` : "";
+
+  return (
+    <div className="rounded-3xl bg-white p-4 shadow-sm">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm font-bold text-deep-forest">{title}</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gray">Last {values.length}</p>
+      </div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-36 w-full overflow-visible">
+        <path d={path} fill="none" stroke={color} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+        {values.map((item, index) => {
+          const x = values.length > 1 ? padding + (index * (width - padding * 2)) / (values.length - 1) : width / 2;
+          const y = height - padding - ((item.value - min) / range) * (height - padding * 2);
+          return <circle key={`${item.label}-${index}`} cx={x} cy={y} r="4" fill={color} />;
+        })}
+      </svg>
+      <div className="mt-2 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-warm-gray">
+        {values.map((item) => (
+          <span key={item.label}>{item.label}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TrendBarChart({
+  title,
+  values,
+  color = "#52B788",
+}: {
+  title: string;
+  values: Array<{ label: string; value: number }>;
+  color?: string;
+}) {
+  const max = Math.max(1, ...values.map((item) => item.value));
+
+  return (
+    <div className="rounded-3xl bg-white p-4 shadow-sm">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm font-bold text-deep-forest">{title}</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gray">Analytics</p>
+      </div>
+      <div className="flex h-36 items-end gap-2">
+        {values.map((item) => {
+          const heightPercent = (item.value / max) * 100;
+          return (
+            <div key={item.label} className="flex flex-1 flex-col items-center gap-2">
+              <div className="flex h-28 w-full items-end rounded-2xl bg-warm-beige p-1">
+                <div
+                  className="w-full rounded-xl"
+                  style={{ height: `${Math.max(8, heightPercent)}%`, backgroundColor: color }}
+                />
+              </div>
+              <span className="text-[10px] uppercase tracking-[0.15em] text-warm-gray">{item.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function InsightsScreen({ userData }: { userData: UserData | null }) {
   const irregular =
     userData?.hasConcerns ||
@@ -1133,17 +1218,44 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
 
   const [modelInfo, setModelInfo] = useState<any | null>(null);
   const [status, setStatus] = useState<string | null>(null);
-  const [prediction, setPrediction] = useState<number | null>(null);
+  const [predictionChance, setPredictionChance] = useState<number | null>(null);
   const [savedPreds, setSavedPreds] = useState<any[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  const demoPreds = useMemo(
+    () => [
+      { input: { age: 24, weight: 58, height: 160, cycleLength: 30 }, prediction: 0, chance: 0.28, at: "Sample 1" },
+      { input: { age: 25, weight: 61, height: 159, cycleLength: 29 }, prediction: 1, chance: 0.56, at: "Sample 2" },
+      { input: { age: 26, weight: 64, height: 158, cycleLength: 33 }, prediction: 1, chance: 0.71, at: "Sample 3" },
+      { input: { age: 27, weight: 66, height: 157, cycleLength: 35 }, prediction: 1, chance: 0.83, at: "Sample 4" },
+    ],
+    []
+  );
+
+  const demoLogs = useMemo(
+    () => [
+      { entryType: "daily" as const, createdAt: "Sample 1", painLevel: 3, flow: "Light", mood: "Calm", symptoms: "", notes: "", tags: [] },
+      { entryType: "daily" as const, createdAt: "Sample 2", painLevel: 5, flow: "Medium", mood: "Tired", symptoms: "Bloating", notes: "", tags: [] },
+      { entryType: "daily" as const, createdAt: "Sample 3", painLevel: 4, flow: "Heavy", mood: "Irritable", symptoms: "Cramps", notes: "", tags: [] },
+      { entryType: "daily" as const, createdAt: "Sample 4", painLevel: 6, flow: "Spotting", mood: "Anxious", symptoms: "Back pain", notes: "", tags: [] },
+      { entryType: "daily" as const, createdAt: "Sample 5", painLevel: 2, flow: "None", mood: "Happy", symptoms: "", notes: "", tags: [] },
+    ],
+    []
+  );
+
+  const displayPreds = savedPreds.length > 0 ? savedPreds : demoPreds;
+  const displayLogs = logs.length > 0 ? logs : demoLogs;
 
   useEffect(() => {
     (async () => {
       try {
         const savedModel = await getModel("pcos-default");
         setModelInfo(savedModel);
-        setStatus(savedModel ? "Loaded saved model" : "No saved model found");
+        setStatus(savedModel ? "Loaded saved PCOS model" : "No saved model found");
         const preds = (await getAllPredictions()) as any[];
         setSavedPreds(preds || []);
+        const entries = await getAllLogEntries();
+        setLogs(entries || []);
       } catch (e) {
         setStatus("Failed to load saved model or predictions");
       }
@@ -1151,8 +1263,8 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
   }, []);
 
   useEffect(() => {
-    if (!modelInfo || !userData || !Array.isArray(modelInfo.weights)) {
-      setPrediction(null);
+    if (!modelInfo || !userData) {
+      setPredictionChance(null);
       return;
     }
     const rawClientFeatures = [
@@ -1163,23 +1275,76 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
       userData.isRegular ? 1 : 0,
       userData.hasConcerns ? 1 : 0,
     ];
-    const sizedFeatures = Array.from({ length: modelInfo.weights.length }, (_, index) => {
-      return rawClientFeatures[index] ?? 0;
-    });
-    const normalized = sizedFeatures.map((value, index) => {
-      const mean = modelInfo.mean?.[index] ?? 0;
-      const std = modelInfo.std?.[index] ?? 1;
-      return (value - mean) / (std || 1);
-    });
-    let z = modelInfo.bias ?? 0;
-    for (let index = 0; index < modelInfo.weights.length; index++) {
-      z += modelInfo.weights[index] * (normalized[index] ?? 0);
-    }
-    setPrediction(z >= 0 ? 1 : 0);
+    const result = predictPcosChance(modelInfo, rawClientFeatures);
+    setPredictionChance(result?.chance ?? null);
   }, [modelInfo, userData]);
 
+  const predictionHistory = useMemo(() => {
+    return displayPreds
+      .slice()
+      .sort((a, b) => new Date(a.at ?? 0).getTime() - new Date(b.at ?? 0).getTime())
+      .slice(-6)
+      .map((record, index) => {
+        const chance = typeof record.chance === "number"
+          ? record.chance
+          : typeof record.prediction === "number"
+            ? record.prediction
+            : 0;
+        return {
+          label: `P${index + 1}`,
+          value: Math.round(chance * 100),
+        };
+      });
+  }, [displayPreds]);
+
+  const painTrend = useMemo(() => {
+    return displayLogs
+      .filter((entry) => entry.entryType === "daily")
+      .slice()
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .slice(-7)
+      .map((entry, index) => ({
+        label: `D${index + 1}`,
+        value: entry.painLevel,
+      }));
+  }, [displayLogs]);
+
+  const avgPain = useMemo(() => {
+    const dailyEntries = displayLogs.filter((entry) => entry.entryType === "daily");
+    if (dailyEntries.length === 0) return 0;
+    return dailyEntries.reduce((sum, entry) => sum + entry.painLevel, 0) / dailyEntries.length;
+  }, [displayLogs]);
+
+  const avgChance = useMemo(() => {
+    if (displayPreds.length === 0) return 0;
+    const values = displayPreds.map((record) => {
+      if (typeof record.chance === "number") return record.chance;
+      if (typeof record.prediction === "number") return record.prediction;
+      return 0;
+    });
+    return values.reduce((sum, value) => sum + value, 0) / values.length;
+  }, [displayPreds]);
+
+  const predictionLabel =
+    predictionChance === null
+      ? "Unavailable"
+      : predictionChance >= 0.7
+        ? "Higher risk"
+        : predictionChance >= 0.4
+          ? "Moderate risk"
+          : "Lower risk";
+
+  const predictionTone =
+    predictionChance === null
+      ? "bg-sand text-deep-forest"
+      : predictionChance >= 0.7
+        ? "bg-rose/20 text-rose"
+        : predictionChance >= 0.4
+          ? "bg-amber-100 text-amber-700"
+          : "bg-sage/20 text-primary-forest";
+
   async function handleSavePrediction() {
-    if (prediction === null || !userData) {
+    if (predictionChance === null || !userData) {
       setStatus("Prediction is not available");
       return;
     }
@@ -1191,7 +1356,13 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
       isRegular: userData.isRegular,
       hasConcerns: userData.hasConcerns,
     };
-    const record = { input, prediction, at: new Date().toISOString(), source: "client-info" };
+    const record = {
+      input,
+      prediction: predictionChance >= 0.5 ? 1 : 0,
+      chance: predictionChance,
+      at: new Date().toISOString(),
+      source: "client-info",
+    };
     try {
       await addPrediction(record);
       setSavedPreds((s) => [...s, record]);
@@ -1213,29 +1384,39 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
       <Card className={`border ${irregular ? "border-rose/20" : "border-sage/20"} bg-white p-5`}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-warm-gray">
-              Risk level
-            </p>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-warm-gray">PCOS chance</p>
             <h3 className="mt-1 font-heading text-3xl text-deep-forest">
-              {irregular ? "Medium" : "Low"}
+              {predictionChance === null ? "Unavailable" : `${Math.round(predictionChance * 100)}%`}
             </h3>
           </div>
 
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${
-              irregular
-                ? "bg-amber-100 text-amber-700"
-                : "bg-sage/20 text-primary-forest"
-            }`}
-          >
-            {irregular ? "Watch" : "Stable"}
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${predictionTone}`}>
+            {predictionLabel}
           </span>
         </div>
 
-        <div className="mt-5 h-32 rounded-3xl bg-sand" />
+        <div className="mt-5 grid grid-cols-3 gap-3 text-center">
+          <div className="rounded-2xl bg-warm-beige p-3">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gray">Cycle</p>
+            <p className="mt-1 text-sm font-bold text-deep-forest">{userData?.cycleLength || 28} days</p>
+          </div>
+          <div className="rounded-2xl bg-warm-beige p-3">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gray">Avg pain</p>
+            <p className="mt-1 text-sm font-bold text-deep-forest">{avgPain.toFixed(1)}/10</p>
+          </div>
+          <div className="rounded-2xl bg-warm-beige p-3">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-warm-gray">Saved</p>
+            <p className="mt-1 text-sm font-bold text-deep-forest">{savedPreds.length}</p>
+          </div>
+        </div>
         <p className="mt-4 text-sm leading-7 text-warm-gray">
-          Personalized diet and movement suggestions will update from the form data and cycle tracking.
+          The model uses your wellness setup and saved PCOS training data to estimate likelihood and support tracking.
         </p>
+        {savedPreds.length === 0 ? (
+          <p className="mt-3 rounded-2xl bg-sand/60 px-3 py-2 text-xs text-warm-gray">
+            Showing sample analytics so you can preview the charts before saving your own data.
+          </p>
+        ) : null}
       </Card>
 
       <Card className="bg-white p-5">
@@ -1245,7 +1426,7 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
           <div className="mt-3">
             <p className="font-bold">Prediction from your information</p>
             <p className="text-sm">
-              {prediction === null ? "Unavailable" : prediction === 1 ? "Higher PCOS risk" : "Lower PCOS risk"}
+              {predictionLabel}
             </p>
             <Button className="mt-3" onClick={handleSavePrediction}>Save prediction</Button>
           </div>
@@ -1253,15 +1434,41 @@ function InsightsScreen({ userData }: { userData: UserData | null }) {
           <div className="mt-3">
             <p className="font-bold">Saved predictions</p>
             <div className="space-y-2 mt-2">
-              {savedPreds.map((p, i) => (
+              {displayPreds.map((p, i) => (
                 <div key={i} className="rounded p-2 bg-warm-beige text-sm">
                   <div>Input: {JSON.stringify(p.input)}</div>
                   <div>Pred: {String(p.prediction)}</div>
+                  <div>Chance: {typeof p.chance === "number" ? `${Math.round(p.chance * 100)}%` : `${Number(p.prediction) * 100 || 0}%`}</div>
                   <div className="text-xs text-warm-gray">{p.at}</div>
                 </div>
               ))}
             </div>
           </div>
+        </div>
+      </Card>
+
+      <Card className="bg-white p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-warm-gray">Analytics</p>
+            <h3 className="mt-1 font-heading text-xl text-deep-forest">Tracking trends</h3>
+          </div>
+          <span className="rounded-full bg-sage/20 px-3 py-1 text-xs font-medium text-primary-forest">
+            Avg chance {Math.round(avgChance * 100)}%
+          </span>
+        </div>
+
+        <div className="mt-4 grid gap-4">
+          <TrendLineChart
+            title="PCOS chance trend"
+            values={predictionHistory.length > 0 ? predictionHistory : [{ label: "No data", value: 0 }]}
+            color="#2D6A4F"
+          />
+          <TrendBarChart
+            title="Pain trend"
+            values={painTrend.length > 0 ? painTrend : [{ label: "No data", value: 0 }]}
+            color="#C0587A"
+          />
         </div>
       </Card>
     </div>
@@ -1297,6 +1504,72 @@ function ProfileScreen({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const w = window as Window & {
+      googleTranslateElementInit?: () => void;
+      google?: {
+        translate?: {
+          TranslateElement?: new (
+            options: {
+              pageLanguage: string;
+              includedLanguages?: string;
+              autoDisplay?: boolean;
+            },
+            elementId: string
+          ) => void;
+        };
+      };
+    };
+
+    const initializeWidget = () => {
+      if (!w.google?.translate?.TranslateElement) return;
+      const host = document.getElementById("google_translate_element");
+      if (!host || host.dataset.initialized === "true") return;
+      host.dataset.initialized = "true";
+      // eslint-disable-next-line no-new
+      new w.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          includedLanguages: "en,hi,es,fr,ja,ml",
+          autoDisplay: false,
+        },
+        "google_translate_element"
+      );
+    };
+
+    w.googleTranslateElementInit = initializeWidget;
+
+    if (!document.getElementById("google-translate-script")) {
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    } else {
+      initializeWidget();
+    }
+
+    return () => {
+      delete w.googleTranslateElementInit;
+    };
+  }, []);
+
+  useEffect(() => {
+    const applyLanguage = () => {
+      const select = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+      if (!select) return;
+      if (select.value !== language) {
+        select.value = language;
+        select.dispatchEvent(new Event("change"));
+      }
+    };
+
+    applyLanguage();
+    const timer = window.setInterval(applyLanguage, 1000);
+    return () => window.clearInterval(timer);
+  }, [language]);
 
   useEffect(() => {
     if (!userData) return;
@@ -1309,6 +1582,19 @@ function ProfileScreen({
     setIsRegular(Boolean(userData.isRegular));
     setHasConcerns(Boolean(userData.hasConcerns));
   }, [userData]);
+
+  useEffect(() => {
+    const savedLanguage = window.localStorage.getItem("app-language");
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+      document.documentElement.lang = savedLanguage;
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("app-language", language);
+    document.documentElement.lang = language;
+  }, [language]);
 
   async function handleSaveProfile() {
     if (!userData) return;
@@ -1531,6 +1817,25 @@ function ProfileScreen({
             >
               {theme === "dark" ? "Light" : "Dark"}
             </button>
+          </div>
+          <div className="rounded-2xl bg-warm-beige p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <Globe size={16} className="text-primary-forest" />
+              <span className="text-sm font-medium text-deep-forest">Language</span>
+            </div>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full rounded-2xl border border-sand bg-white px-4 py-3 text-sm text-deep-forest"
+            >
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="ja">日本語</option>
+              <option value="ml">മലയാളം</option>
+            </select>
+            <div id="google_translate_element" className="mt-3 hidden" />
           </div>
           <button type="button" onClick={loadExportRows} className="flex w-full items-center justify-between rounded-2xl bg-warm-beige p-4 text-left">
             <span className="text-sm font-medium text-deep-forest">Load export data</span>

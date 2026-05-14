@@ -40,6 +40,102 @@ export async function getModel(id: string) {
   });
 }
 
+export type PcosTreeNode = {
+  featureIndex?: number;
+  threshold?: number;
+  left?: PcosTreeNode | number;
+  right?: PcosTreeNode | number;
+  value?: number;
+  probability?: number;
+};
+
+export type PcosModel = {
+  kind?: 'random-forest' | 'logistic';
+  trees?: PcosTreeNode[];
+  weights?: number[];
+  bias?: number;
+  mean?: number[];
+  std?: number[];
+};
+
+function sigmoid(z: number) {
+  return 1 / (1 + Math.exp(-z));
+}
+
+function clampChance(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
+
+function readLeafValue(node: PcosTreeNode | number | undefined): number {
+  if (typeof node === 'number') return node;
+  if (!node) return 0;
+  if (typeof node.value === 'number') return node.value;
+  if (typeof node.probability === 'number') return node.probability;
+  return 0;
+}
+
+function traverseTree(node: PcosTreeNode | number | undefined, features: number[]): number {
+  if (typeof node === 'number' || !node) {
+    return readLeafValue(node);
+  }
+
+  const hasChildren = node.left != null || node.right != null;
+  if (!hasChildren) {
+    return readLeafValue(node);
+  }
+
+  const featureIndex = node.featureIndex ?? 0;
+  const threshold = node.threshold ?? 0;
+  const value = features[featureIndex] ?? 0;
+  const nextNode = value <= threshold ? node.left : node.right;
+  return traverseTree(nextNode, features);
+}
+
+function normalizeLinearFeatures(model: PcosModel, features: number[]) {
+  const weightsLength = model.weights?.length ?? features.length;
+  return Array.from({ length: weightsLength }, (_, index) => {
+    const raw = features[index] ?? 0;
+    const mean = model.mean?.[index] ?? 0;
+    const std = model.std?.[index] ?? 1;
+    return (raw - mean) / (std || 1);
+  });
+}
+
+export function predictPcosChance(model: PcosModel | null | undefined, features: number[]) {
+  if (!model) {
+    return null;
+  }
+
+  const treeSet = Array.isArray(model.trees) ? model.trees : [];
+  if (treeSet.length > 0) {
+    const votes = treeSet.map((tree) => traverseTree(tree, features));
+    const averageVote = votes.reduce((sum, vote) => sum + vote, 0) / votes.length;
+    const chance = clampChance(averageVote > 1 ? sigmoid(averageVote) : averageVote);
+    return {
+      chance,
+      label: chance >= 0.5 ? 1 : 0,
+      method: 'random-forest',
+    };
+  }
+
+  if (Array.isArray(model.weights) && model.weights.length > 0) {
+    const normalized = normalizeLinearFeatures(model, features);
+    let z = model.bias ?? 0;
+    for (let index = 0; index < model.weights.length; index++) {
+      z += model.weights[index] * (normalized[index] ?? 0);
+    }
+    const chance = clampChance(sigmoid(z));
+    return {
+      chance,
+      label: chance >= 0.5 ? 1 : 0,
+      method: 'logistic',
+    };
+  }
+
+  return null;
+}
+
 export async function addPrediction(record: any) {
   const db = await openDB();
   return new Promise((resolve, reject) => {

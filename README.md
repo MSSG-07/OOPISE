@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Oopsie — Smart Period Triage
+
+Oopsie is a cycle and wellness tracking app built with Next.js. It helps users log symptoms, track daily flow and mood, view cycle phase insights, explore community support, and manage profile data locally in the browser.
+
+The app is designed to be private-first: most user data is stored in IndexedDB on the device, and the profile section includes editable wellness settings, language selection, and export options.
+
+## Key Features
+
+- **Home dashboard** with current cycle phase and daily wellness summary
+- **Daily log** for pain level, flow, mood, symptoms, notes, and tags
+- **Interactive body map** with multi-select pain areas and pain types
+- **Anonymous community feed** with post support and replies
+- **Personalized wellness guidance** with phase-aware food and yoga recommendations
+- **Editable profile** for wellness setup and personal cycle details
+- **Password-protected activity view** for private activity records
+- **Data export** to CSV and printable table/PDF-style view
+- **Theme support** with dark mode
+- **Language selector** with translation support for multiple languages
+
+## Tech Stack
+
+- **Framework:** Next.js 16
+- **Language:** TypeScript
+- **UI:** React 19, Tailwind CSS 4
+- **Icons:** lucide-react
+- **Storage:** IndexedDB for local persistence
+- **Translation:** Google Translate widget integration and language selector
+
+## What the App Stores Locally
+
+The app saves data in the browser using IndexedDB, including:
+
+- user profile and wellness setup
+- daily log entries
+- body map entries
+- community posts
+- community interactions such as likes and replies
+- predictions and derived wellness data
+
+This means user data stays on the device unless exported.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Open the app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visit:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+http://localhost:3000
+```
 
-## Learn More
+## Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` — start the development server
+- `npm run build` — create a production build
+- `npm run start` — run the production server
+- `npm run lint` — run ESLint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Main Screens
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Home
+Shows the current phase, recent flow and mood, and a summary of the user’s wellness state.
 
-## Deploy on Vercel
+### Log
+Used to record daily symptoms, pain intensity, flow, mood, and notes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Body Map
+Lets the user mark affected areas and select pain types for better tracking.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Community
+Provides anonymous posting, likes, and replies for support sharing.
+
+### Insights
+Displays trends and phase-based wellness guidance.
+
+### Profile
+Contains editable wellness details, dark mode, export tools, language selection, and logout.
+
+## Language Support
+
+The profile section includes a language selector with support for:
+
+- English
+- हिन्दी
+- Español
+- Français
+- 日本語
+- മലയാളം
+
+Language switching is powered by the Google Translate widget integration.
+
+## Export and Privacy
+
+The profile section includes:
+
+- **CSV export** for structured record sharing
+- **Activity view** protected by a password prompt
+- **Printable table view** for reviewing stored records
+
+The app does not rely on a remote database for core tracking data, which keeps the experience lightweight and private.
+
+## Project Structure
+
+```text
+app/
+  layout.tsx
+  page.tsx
+  dashboard/
+    page.tsx
+  onboarding/
+    page.tsx
+  setup/
+    page.tsx
+components/
+  BottomNav.tsx
+  PhoneFrame.tsx
+  ui.tsx
+public/
+  locales/
+```
+
+## Notes
+
+- Some translation features depend on Google Translate being available in the browser.
+- Data is stored locally in the browser, so clearing site data will remove saved records.
+- Exported files should be handled carefully because they may contain personal health information.
+
+## Contributing
+
+If you want to extend the app, good next steps are:
+
+- add more supported languages
+- improve the export formats
+- expand the wellness guidance content
+- add reminders or notification support
+
+## License
+
+No license has been specified yet.
